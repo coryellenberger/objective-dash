@@ -1,6 +1,8 @@
 package com.dashboard;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,12 +17,12 @@ import java.util.ArrayList;
 public class ExampleController {
 
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Response index() {
+    public ResponseEntity getDemo() {
         ArrayList<String> resp = new ArrayList<>();
         resp.add("ABC");
         resp.add("123");
         resp.add("XYZ");
         resp.add("789");
-        return Response.success("Example Controller", resp);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }
