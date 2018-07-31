@@ -14,12 +14,25 @@ Git
 
 IntelliJ/VS Code
 
+## Initial Local Setup
+
+First you must setup the front end application
+
+$cd app
+
+$npm install
+
+$ng build
+
+This will Compile the front end application at the src/main/java/resources/static directory to be used by the server
 
 ## Development server
 
 Create Run Configuration using com.dashboard.Application as the Main Class
 
-Visit localhost:8080 - will be serving up the
+Run or Debug this Run Configuration
+
+Visit localhost:8080
 
 ## Code scaffolding
 
