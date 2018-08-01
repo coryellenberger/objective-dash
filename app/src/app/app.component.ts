@@ -16,19 +16,28 @@ export class AppComponent {
 
   public example;
 
+  public isAuthenticated = false;
+
   constructor(private _demoService: DemoService) { }
 
   ngOnInit() {
     this.getDemo();
   }
 
-  getDemo() {
-    this._demoService.getDemo().subscribe(
+  onClickMe() {
+    this._demoService.authDemo().subscribe(
       data => {
-        this.example = data
+        this.isAuthenticated = true
       },
       err => console.error(err),
       () => console.log('done loading Demo')
+    );
+  }
+
+  getDemo() {
+    this._demoService.registerUserDemo().subscribe(
+      err => console.error(err),
+      () => console.log('Registered Successfully')
     );
   }
 }
