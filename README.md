@@ -22,23 +22,23 @@ Import the Maven project and all the dependencies.
 
 First time setup: configure the JDK with IntelliJ.
 
-Then you must build and compile the front end application:
-
 Run `cd app` to change to the app directory.
 
 The source for the Angular 6 Application resides in the app directory
 
-Run `npm install` to install the Angular/NodeJS dependencies required to run unit tests, ete tests, etc
+Run `npm install` to install the Angular/NodeJS dependencies required to run unit tests, ete tests, etc.
 
-Run `ng build` to Build/Compile the front end application at the src/main/java/resources/static directory to be used by the server
+First time setup: Run `npm install -g @angular/cli` to install the Angular CLI tool globally for build/test/scaffolding of the front end app.
+
+Run `ng build` to Build/Compile the front end application at the src/main/java/resources/static directory to be used by the server.
 
 (Note: application.properties has configuration for the static directory that will force the files to be updated by the browser. Remove this property for caching purposes.)
 
 ## Development server
 
-Create Run Configuration using com.dashboard.Application as the Main Class
+Create Run Configuration using com.dashboard.Application as the Main Class.
 
-Run or Debug this Run Configuration
+Run or Debug this Run Configuration.
 
 Visit localhost:8080
 
