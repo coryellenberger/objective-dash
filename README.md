@@ -2,9 +2,7 @@
 
 ## Setup Required
 
-Java JDK 8
-
-Maven 3
+[Java JDK 8 and Maven 3](https://www.mkyong.com/maven/how-to-install-maven-in-windows/)
 
 Neo4j
 
