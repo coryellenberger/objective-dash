@@ -16,6 +16,7 @@ import java.util.ArrayList;
 @RestController
 public class ExampleController {
 
+
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity getDemo() {
         ArrayList<String> resp = new ArrayList<>();
@@ -23,6 +24,7 @@ public class ExampleController {
         resp.add("123");
         resp.add("XYZ");
         resp.add("789");
+
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }
