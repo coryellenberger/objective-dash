@@ -1,6 +1,7 @@
 package com.dashboard.person;
 
 import com.dashboard.repositories.PersonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class PersonController {
 
+    @Autowired
     PersonRepository personRepository;
 
     @RequestMapping(
@@ -35,9 +37,10 @@ public class PersonController {
     }
 
     @RequestMapping(
-            method = RequestMethod.DELETE
+            method = RequestMethod.DELETE,
+            value = "/{id}"
     )
-    void delete(@RequestParam long personId) {
-        personRepository.removePerson(personId);
+    void delete(@PathVariable("id") Long id) {
+        personRepository.removePerson(id);
     }
 }
