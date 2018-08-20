@@ -1,71 +1,41 @@
-# Objective Dashboard
+# GRANDstack Starter
 
-## Setup Required
+This project is a starter for building a [GRANDstack](https://grandstack.io) (GraphQL, React, Apollo, Neo4j Database) application. There are two components to the starter, the UI application (a React app) and the API app (GraphQL server).
 
-[Git](https://git-scm.com/download/win "Git Webpage")
+## Quickstart
 
-[Java JDK 8 and Maven 3](https://www.mkyong.com/maven/how-to-install-maven-in-windows/ "How to on: install and configure Java/Maven")
+### Neo4j
 
-[Neo4j](https://neo4j.com/ "Neo4j Webpage")
+You need a Neo4j instance, e.g. a [Neo4j Sandbox](http://neo4j.com/sandbox), a local instance via [Neo4j Desktop](https://neo4j.com/download), [Docker](http://hub.docker.com/_/neo4j) or a [Neo4j instance on AWS, Azure or GCP](http://neo4j.com/developer/guide-cloud-deployment) or [Neo4j Cloud](http://neo4j.com/cloud)
 
-[NodeJS](https://nodejs.org/en/ "NodeJS Webpage")
+For schemas using the  `@cypher` directive via [`neo4j-graphql-js`](https://github.com/neo4j-graphql/neo4j-graphql-js), you need to have the [APOC library](https://github.com/neo4j-contrib/neo4j-apoc-procedures) installed, which is automatic in Sandbox, Cloud and a single click install in Neo4j Desktop. 
 
-[IntelliJ/VS Code](https://www.jetbrains.com/idea/ "IntelliJ Webpage")
+### [`/api`](./api)
 
-## Initial Local Setup
+*Install dependencies*
 
-(All of the pre-requisitves above must be completed first)
+```
+(cd ./ui && npm install)
+(cd ./api && npm install)
+```
 
-Check out the source from git.
+*Start API server*
+```
+cd ./api && npm start
+```
 
-Import the Maven project and all the dependencies.
+![](api/img/graphql-playground.png)
 
-First time setup: configure the JDK with IntelliJ.
+### [`/ui`](./ui)
 
-Run `cd app` to change to the app directory.
+This will start the GraphQL API in the foreground, so in another terminal session start the UI development server:
 
-The source for the Angular 6 Application resides in the app directory
+*Start UI server*
+```
+cd ./ui && npm start
+```
 
-Run `npm install` to install the Angular/NodeJS dependencies required to run unit tests, ete tests, etc.
+![](ui/img/default-app.png)
 
-First time setup: Run `npm install -g @angular/cli` to install the Angular CLI tool globally for build/test/scaffolding of the front end app.
-
-Run `ng build` to Build/Compile the front end application at the src/main/java/resources/static directory to be used by the server.
-
-(Note: application.properties has configuration for the static directory that will force the files to be updated by the browser. Remove this property for caching purposes.)
-
-## Development server
-
-Create Run Configuration using com.dashboard.Application as the Main Class.
-
-Run or Debug this Run Configuration.
-
-Visit localhost:8080
-
-(Note: with the application properties configuration above set you can change/re-compile the Angular app and see the changes when refreshing the browser; instead of having to reset the Spring Application)
-
-
-
-
-
-## Running back end unit tests
-
-You can do this within IntelliJ by right clicking on the src/test/java directory and selecting "Run 'All Tests'" or selecting a single Test class or method and executing it directly.
-
-## Code scaffolding front end
-
-(Confirm you are in the app directory)
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
-## Running front end unit tests
-
-(Confirm you are in the app directory)
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-(Confirm you are in the app directory)
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+This project is licensed under the Apache License v2.
+Copyright (c) 2018 Neo4j, Inc.
