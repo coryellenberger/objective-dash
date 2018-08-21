@@ -1,7 +1,7 @@
 {
-  "name": "grand-stack-starter-api",
+  "name": "objective-dash-api",
   "version": "0.0.1",
-  "description": "API app for GRANDstack",
+  "description": "API app for the Objective Dashboard",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
