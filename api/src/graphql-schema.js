@@ -24,14 +24,14 @@ export const typeDefs = `
 
 export const resolvers = {
   Query: {
-    currentUser: async (root, args, scope) => {
-      const context = await scope.authScope;
+    currentUser: async (root, args, context) => {
+      context = await context.authScope;
       return await context.user;
     },
   },
   Mutation: {
-    login: async (root, { email, password }, scope) => {
-      const context = await scope.authScope;
+    login: async (root, { email, password }, context) => {
+      context = await context.authScope;
 
       const session = context.driver.session();
 
@@ -49,14 +49,20 @@ export const resolvers = {
         throw new Error('Password is incorrect');
       }
 
-      user.jwt = jwt.sign({ id: user.id }, context.secrets.JWT_SECRET);
+      user.jwt = jwt.sign({
+        exp: expirationDate(),
+        id: user.id
+      }, context.secrets.JWT_SECRET);
 
       session.close();
 
+      // clear the password from the user object before returning
+      delete user.password;
+
       return user;
     },
-    signup: async (root, { email, password }, scope) => {
-      const context = await scope.authScope;
+    signup: async (root, { email, password }, context) => {
+      context = await context.authScope;
 
       const session = context.driver.session();
 
@@ -67,71 +73,35 @@ export const resolvers = {
         throw new Error('Email already used');
       }
 
-      const hash = await bcrypt.hash(password, 10);
+      // query for the # of users
       const numberUsers = await session
         .run('MATCH (users:User) RETURN count(*)');
-      const count = parseInt(numberUsers.records[0].get('count(*)')) + 1
+      // get the count from the results
+      const count = parseInt(numberUsers.records[0].get('count(*)')) + 1;
+
+      // create user with id, password, email
       const results = await session
         .run('CREATE (newUser:User { id: { id }, email: { email }, password: { password } }) RETURN newUser', {
           id: 'u' + count,
           email: email,
           password: hash
         });
+      // get user from results
       const user = results.records[0].get('newUser').properties;
 
-      user.jwt = jwt.sign({ id: user.id }, context.secrets.JWT_SECRET);
+      user.jwt = jwt.sign({
+        exp: expirationDate(),
+        id: user.id
+      }, context.secrets.JWT_SECRET);
 
       session.close();
+
+      // clear the password from the user object before returning
+      delete user.password;
 
       return user;
     }
   }
-};
-
-// https://launchpad.graphql.com/n4xk8xm87
-const getUser = async (authorization, secrets, driver) => {
-  const bearerLength = "Bearer ".length;
-  if (authorization && authorization.length > bearerLength) {
-    const token = authorization.slice(bearerLength);
-    const { ok, result } = await new Promise(resolve =>
-      jwt.verify(token, secrets.JWT_SECRET, (err, result) => {
-        if (err) {
-          console.log('Ok error');
-          resolve({
-            ok: false,
-            result: err
-          });
-        } else {
-          console.log('Ok 2');
-          resolve({
-            ok: true,
-            result
-          });
-        }
-      })
-    );
-
-    if (ok) {
-      const session = driver.session();
-
-      console.log(result.id);
-
-      const results = await session
-        .run('MATCH (user:User { id: { id } }) RETURN user', { id: result.id });
-
-      const user = results.records[0].get('user').properties;
-
-      console.log(user);
-
-      session.close();
-      return user;
-    } else {
-      console.error(result);
-      return null;
-    }
-  }
-
-  return null;
 };
 
 export async function context(req) {
@@ -163,3 +133,53 @@ export async function context(req) {
   };
 
 }
+
+const getUser = async (authorization, secrets, driver) => {
+  const bearerLength = "Bearer ".length;
+  if (authorization && authorization.length > bearerLength) {
+    const token = authorization.slice(bearerLength);
+    const { ok, result } = await new Promise(resolve =>
+      jwt.verify(token, secrets.JWT_SECRET, (err, result) => {
+        if (err) {
+          resolve({
+            ok: false,
+            result: err
+          });
+        } else {
+          resolve({
+            ok: true,
+            result
+          });
+        }
+      })
+    );
+
+    if (ok) {
+      const session = driver.session();
+      let user;
+
+      const results = await session
+        .run('MATCH (user:User { id: { id } }) RETURN user', { id: result.id });
+
+      if (results.records.length) {
+        user = results.records[0].get('user').properties;
+
+        // clear the password from the user object before returning
+        delete user.password;
+      }
+
+      session.close();
+      return user;
+    } else {
+      console.error(result);
+      return null;
+    }
+  }
+
+  return null;
+};
+
+const expirationDate = () => {
+  // 24 hours till expires
+  return Math.floor(Date.now() / 1000) + (60 * 60 * 24);
+};
