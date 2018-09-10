@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import './App.css';
-import UserList from './UserList';
+import Login from './components/Login';
 
-class App extends Component {
+export default class App extends Component {
   render() {
     return (
       <div className="App">
@@ -11,10 +10,8 @@ class App extends Component {
           <h1 className="App-title">Welcome to GRANDstack</h1>
         </header>
         
-        <UserList />
+        <Login />
       </div>
     );
   }
 }
-
-export default App;

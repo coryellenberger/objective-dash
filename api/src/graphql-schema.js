@@ -38,11 +38,11 @@ export const resolvers = {
       const userResults = await session
         .run('MATCH (user:User { email: { email } }) RETURN user', { email: email });
 
-      const user = userResults.records[0].get('user').properties
-
-      if (!user) {
+      if (!userResults.records.length > 0) {
         throw new Error('Email not found');
       }
+
+      const user = userResults.records[0].get('user').properties
 
       const validPassword = await bcrypt.compare(password, user.password);
       if (!validPassword) {
