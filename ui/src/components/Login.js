@@ -1,25 +1,51 @@
 import React, {Component} from 'react';
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import LockIcon from '@material-ui/icons/LockOutlined';
 
 import gql from 'graphql-tag';
 import {Mutation} from 'react-apollo';
 
 const styles = theme => ({
-  margin: {
-    margin: theme.spacing.unit,
+  layout: {
+    width: 'auto',
+    display: 'block', // Fix IE11 issue.
+    marginLeft: theme.spacing.unit * 3,
+    marginRight: theme.spacing.unit * 3,
+    [theme.breakpoints.up(400 + theme.spacing.unit * 3 * 2)]: {
+      width: 400,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
   },
-  textField: {
-    flexBasis: 200,
+  paper: {
+    marginTop: theme.spacing.unit * 8,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px ${theme.spacing.unit * 3}px`,
+  },
+  avatar: {
+    margin: theme.spacing.unit,
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE11 issue.
+    marginTop: theme.spacing.unit,
+  },
+  submit: {
+    marginTop: theme.spacing.unit * 3,
   },
 });
 
@@ -60,64 +86,71 @@ class Login extends Component {
 
     return (
       <Mutation mutation={LOGIN}>
-        {(login, {data}) => (
-          <form onSubmit={e => {
-            e.preventDefault();
-            login({variables: {email: state.email, password: state.password}})
-              .then(value => {
-                console.log('Logged in successfully', value);
-                localStorage.setItem('access_token', value.data.login.jwt);
-              })
-              .catch(error => {
-                // todo notify the user
-                console.log('There was an error', error);
-              });
-            console.log('Logged in?', state.email);
-          }}>
-            <FormControl className={classNames(classes.margin, classes.textField)}>
-              <InputLabel htmlFor="email">Email</InputLabel>
-              <Input
-                id="email"
-                value={this.state.email}
-                onChange={this.handleChange('email')}
-              />
-            </FormControl>
-            < br/>
-            <FormControl className={classNames(classes.margin, classes.textField)}>
-              <InputLabel htmlFor="adornment-password">Password</InputLabel>
-              <Input
-                id="adornment-password"
-                type={this.state.showPassword ? 'text' : 'password'}
-                value={this.state.password}
-                onChange={this.handleChange('password')}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="Toggle password visibility"
-                      onClick={this.handleClickShowPassword}
-                      onMouseDown={this.handleMouseDownPassword}
-                    >
-                      {this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
-                    </IconButton>
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-            <br/>
-            <Button variant={"outlined"} color={"primary"} style={style}
-                    type={"submit"}>
-              Login
-            </Button>
-          </form>
+        {(login) => (
+          <main className={classes.layout}>
+            <Paper className={classes.paper}>
+              <Avatar className={classes.avatar}>
+                <LockIcon/>
+              </Avatar>
+              <Typography variant="headline">Sign in</Typography>
+              <form className={classes.form} onSubmit={e => {
+                e.preventDefault();
+                login({variables: {email: state.email, password: state.password}})
+                  .then(value => {
+                    console.log('Logged in successfully', value);
+                    localStorage.setItem('access_token', value.data.login.jwt);
+                  })
+                  .catch(error => {
+                    // todo notify the user
+                    console.log('There was an error', error);
+                  });
+                console.log('Logged in?', state.email);
+              }}>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="email">Email</InputLabel>
+                  <Input
+                    id="email"
+                    value={this.state.email}
+                    onChange={this.handleChange('email')}
+                    autoFocus
+                  />
+                </FormControl>
+                <FormControl margin="normal" required fullWidth>
+                  <InputLabel htmlFor="adornment-password">Password</InputLabel>
+                  <Input
+                    id="adornment-password"
+                    type={this.state.showPassword ? 'text' : 'password'}
+                    value={this.state.password}
+                    onChange={this.handleChange('password')}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="Toggle password visibility"
+                          onClick={this.handleClickShowPassword}
+                          onMouseDown={this.handleMouseDownPassword}
+                        >
+                          {this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
+                <br/>
+                <Button type="submit"
+                        fullWidth
+                        variant="raised"
+                        color="primary"
+                        className={classes.submit}>
+                  Login
+                </Button>
+              </form>
+            </Paper>
+          </main>
         )}
       </Mutation>
     );
   }
 }
-
-const style = {
-  margin: 15,
-};
 
 Login.propTypes = {
   classes: PropTypes.object.isRequired,
