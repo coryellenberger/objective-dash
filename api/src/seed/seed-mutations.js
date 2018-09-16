@@ -85,7 +85,7 @@ export default `mutation {
       id
       name
     }
-     b8:CreateBusiness(
+    b8:CreateBusiness(
       id:"b8",
       name:"Philz Coffee",
       address: "113 B St",
@@ -95,7 +95,7 @@ export default `mutation {
       id
       name
     }
-     b9:CreateBusiness(
+    b9:CreateBusiness(
       id:"b9",
       name:"Alpha Acid Brewing Company",
       address: "121 Industrial Rd #11",
@@ -105,7 +105,7 @@ export default `mutation {
       id
       name
     }
-     b10:CreateBusiness(
+    b10:CreateBusiness(
       id:"b10",
       name:"San Mateo Public Library Central Library",
       address: "55 W 3rd Ave",
@@ -152,11 +152,11 @@ export default `mutation {
     ar1:AddUserReview(userid:"u1",reviewid:"r1"){id}
     ab1:AddReviewBusiness(reviewid:"r1", businessid:"b1"){id}
     
-    r2:CreateReview(id:"r2", stars: 5, text: ""){id}
+    r2:CreateReview(id:"r2", stars: 5, text: "Delicious"){id}
     ar2:AddUserReview(userid:"u3",reviewid:"r2"){id}
     ab2:AddReviewBusiness(reviewid:"r2", businessid:"b1"){id}
     
-    r3:CreateReview(id:"r3", stars: 3, text: ""){id}
+    r3:CreateReview(id:"r3", stars: 3, text: "Could be better"){id}
     ar3:AddUserReview(userid:"u4",reviewid:"r3"){id}
     ab3:AddReviewBusiness(reviewid:"r3", businessid:"b2"){id}
     
@@ -187,7 +187,5 @@ export default `mutation {
     r10:CreateReview(id:"r10", stars: 4, text: ""){id}
     ar10:AddUserReview(userid:"u2",reviewid:"r10"){id}
     ab10:AddReviewBusiness(reviewid:"r10", businessid:""){id}
-    
-    
   }
 `  

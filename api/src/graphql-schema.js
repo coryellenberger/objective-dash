@@ -1,53 +1,185 @@
-import { neo4jgraphql } from "neo4j-graphql-js";
+import {v1 as neo4j} from "neo4j-driver";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+let driver;
 
 export const typeDefs = `
-type User {
-  id: ID!
-  name: String
-  friends(first: Int = 10, offset: Int = 0): [User] @relation(name: "FRIENDS", direction: "BOTH")
-  reviews(first: Int = 10, offset: Int = 0): [Review] @relation(name: "WROTE", direction: "OUT")
-  avgStars: Float @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))")
-  numReviews: Int @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
-}
-
-type Business {
-  id: ID!
-  name: String
-  address: String
-  city: String
-  state: String
-  reviews(first: Int = 10, offset: Int = 0): [Review] @relation(name: "REVIEWS", direction: "IN")
-  categories(first: Int = 10, offset: Int =0): [Category] @relation(name: "IN_CATEGORY", direction: "OUT")
-}
-
-type Review {
-  id: ID!
-  stars: Int
-  text: String
-  business: Business @relation(name: "REVIEWS", direction: "OUT")
-  user: User @relation(name: "WROTE", direction: "IN")
-}
-
-type Category {
-  name: ID!
-  businesses(first: Int = 10, offset: Int = 0): [Business] @relation(name: "IN_CATEGORY", direction: "IN")
-}
-
-type Query {
-    users(id: ID, name: String, first: Int = 10, offset: Int = 0): [User]
-    businesses(id: ID, name: String, first: Int = 10, offset: Int = 0): [Business]
-    reviews(id: ID, stars: Int, first: Int = 10, offset: Int = 0): [Review]
-    category(name: ID!): Category
-    usersBySubstring(substring: String, first: Int = 10, offset: Int = 0): [User] @cypher(statement: "MATCH (u:User) WHERE u.name CONTAINS $substring RETURN u")
-}
+  type User {
+    id: ID!
+    email: String!
+    password: String!
+    jwt: String
+  }
+  
+  type Query {
+    currentUser: User
+  }
+  
+  type Mutation {
+    login(email: String!, password: String!): User
+    signup(email: String!, password: String!): User
+  }
 `;
 
 export const resolvers = {
   Query: {
-    users: neo4jgraphql,
-    businesses: neo4jgraphql,
-    reviews: neo4jgraphql,
-    category: neo4jgraphql,
-    usersBySubstring: neo4jgraphql
+    currentUser: async (root, args, context) => {
+      context = await context.authScope;
+      return await context.user;
+    },
+  },
+  Mutation: {
+    login: async (root, { email, password }, context) => {
+      context = await context.authScope;
+
+      const session = context.driver.session();
+
+      const userResults = await session
+        .run('MATCH (user:User { email: { email } }) RETURN user', { email: email });
+
+      if (!userResults.records.length > 0) {
+        throw new Error('Email not found');
+      }
+
+      const user = userResults.records[0].get('user').properties
+
+      const validPassword = await bcrypt.compare(password, user.password);
+      if (!validPassword) {
+        throw new Error('Password is incorrect');
+      }
+
+      user.jwt = jwt.sign({
+        exp: expirationDate(),
+        id: user.id
+      }, context.secrets.JWT_SECRET);
+
+      session.close();
+
+      // clear the password from the user object before returning
+      delete user.password;
+
+      return user;
+    },
+    signup: async (root, { email, password }, context) => {
+      context = await context.authScope;
+
+      const session = context.driver.session();
+
+      const existingUser = await session
+        .run('MATCH (user:User { email: { email } }) RETURN user', { email: email });
+
+      if (existingUser.records.length > 0) {
+        throw new Error('Email already used');
+      }
+
+      // query for the # of users
+      const numberUsers = await session
+        .run('MATCH (users:User) RETURN count(*)');
+      // get the count from the results
+      const count = parseInt(numberUsers.records[0].get('count(*)')) + 1;
+
+      // create user with id, password, email
+      const results = await session
+        .run('CREATE (newUser:User { id: { id }, email: { email }, password: { password } }) RETURN newUser', {
+          id: 'u' + count,
+          email: email,
+          password: hash
+        });
+      // get user from results
+      const user = results.records[0].get('newUser').properties;
+
+      user.jwt = jwt.sign({
+        exp: expirationDate(),
+        id: user.id
+      }, context.secrets.JWT_SECRET);
+
+      session.close();
+
+      // clear the password from the user object before returning
+      delete user.password;
+
+      return user;
+    }
   }
+};
+
+export async function context(req) {
+  if (!driver) {
+    driver = neo4j.driver(
+      process.env.NEO4J_URI || "bolt://localhost:7687",
+      neo4j.auth.basic(
+        process.env.NEO4J_USER || "neo4j",
+        process.env.NEO4J_PASSWORD || "neo4j"
+      )
+    );
+  }
+
+  let secrets;
+
+  if (!secrets) {
+    secrets = process.env;
+  }
+
+  let headers = req.headers;
+
+  const user = await getUser(headers.authorization, secrets, driver);
+
+  return {
+    headers,
+    secrets,
+    driver,
+    user,
+  };
+
+}
+
+const getUser = async (authorization, secrets, driver) => {
+  const bearerLength = "Bearer ".length;
+  if (authorization && authorization.length > bearerLength) {
+    const token = authorization.slice(bearerLength);
+    const { ok, result } = await new Promise(resolve =>
+      jwt.verify(token, secrets.JWT_SECRET, (err, result) => {
+        if (err) {
+          resolve({
+            ok: false,
+            result: err
+          });
+        } else {
+          resolve({
+            ok: true,
+            result
+          });
+        }
+      })
+    );
+
+    if (ok) {
+      const session = driver.session();
+      let user;
+
+      const results = await session
+        .run('MATCH (user:User { id: { id } }) RETURN user', { id: result.id });
+
+      if (results.records.length) {
+        user = results.records[0].get('user').properties;
+
+        // clear the password from the user object before returning
+        delete user.password;
+      }
+
+      session.close();
+      return user;
+    } else {
+      console.error(result);
+      return null;
+    }
+  }
+
+  return null;
+};
+
+const expirationDate = () => {
+  // 24 hours till expires
+  return Math.floor(Date.now() / 1000) + (60 * 60 * 24);
 };
