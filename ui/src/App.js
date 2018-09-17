@@ -2,14 +2,13 @@ import React, {Component} from 'react';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Login from './components/Login';
-
+import Layout from './Layout/Layout';
 
 const theme = createMuiTheme({
   palette: {
     primary: {
       // light: will be calculated from palette.primary.main,
-      main: '#ff4400',
+      main: '#1e73be',
       // dark: will be calculated from palette.primary.main,
       // contrastText: will be calculated to contrast with palette.primary.main
     },
@@ -29,7 +28,7 @@ export default class App extends Component {
       <React.Fragment>
         <CssBaseline/>
         <MuiThemeProvider theme={theme}>
-          <Login/>
+          <Layout/>
         </MuiThemeProvider>
       </React.Fragment>
     );

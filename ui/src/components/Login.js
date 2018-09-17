@@ -1,21 +1,25 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import {withStyles} from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import Typography from '@material-ui/core/Typography';
-import FormControl from '@material-ui/core/FormControl';
-import Visibility from '@material-ui/icons/Visibility';
-import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import LockIcon from '@material-ui/icons/LockOutlined';
+import {Mutation} from 'react-apollo';
 
 import gql from 'graphql-tag';
-import {Mutation} from 'react-apollo';
+
+import PropTypes from 'prop-types';
+import {withStyles} from '@material-ui/core/styles';
+
+import {
+  Avatar,
+  Button,
+  FormControl,
+  IconButton,
+  Input,
+  InputAdornment,
+  InputLabel,
+  Paper,
+  Typography
+} from '@material-ui/core';
+import LockIcon from '@material-ui/icons/LockOutlined';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 
 const styles = theme => ({
   layout: {
