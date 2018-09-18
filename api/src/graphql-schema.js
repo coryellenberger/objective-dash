@@ -79,6 +79,8 @@ export const resolvers = {
       // get the count from the results
       const count = parseInt(numberUsers.records[0].get('count(*)')) + 1;
 
+      const hash = await bcrypt.hash(password, 10);
+
       // create user with id, password, email
       const results = await session
         .run('CREATE (newUser:User { id: { id }, email: { email }, password: { password } }) RETURN newUser', {

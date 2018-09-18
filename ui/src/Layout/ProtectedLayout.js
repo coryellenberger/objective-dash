@@ -10,7 +10,8 @@ import {BrowserRouter as Router, NavLink, Route} from 'react-router-dom';
 
 import Home from '../components/Home';
 import Login from '../components/Login';
-import Signup from '../components/Signup';
+import Person from '../components/Person';
+import PrivateRoute from '../components/PrivateRoute';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -92,7 +93,7 @@ const styles = theme => ({
   },
 });
 
-class Layout extends React.Component {
+class ProtectedLayout extends React.Component {
   state = {
     open: false,
   };
@@ -149,25 +150,17 @@ class Layout extends React.Component {
               <NavLink to={'/'} style={{textDecoration: 'none'}}>
                 <ListItem button>
                   <ListItemIcon>
-                    <SendIcon/>
-                  </ListItemIcon>
-                  <ListItemText primary='Home'/>
-                </ListItem>
-              </NavLink>
-              <NavLink to={'/signup'} style={{textDecoration: 'none'}}>
-                <ListItem button>
-                  <ListItemIcon>
                     <InboxIcon/>
                   </ListItemIcon>
-                  <ListItemText primary='Sign Up'/>
+                  <ListItemText primary='Inbox'/>
                 </ListItem>
               </NavLink>
-              <NavLink to={'/login'} style={{textDecoration: 'none'}}>
+              <NavLink to={'/protected'} style={{textDecoration: 'none'}}>
                 <ListItem button>
                   <ListItemIcon>
                     <StarIcon/>
                   </ListItemIcon>
-                  <ListItemText primary='Login'/>
+                  <ListItemText primary='Starred'/>
                 </ListItem>
               </NavLink>
             </List>
@@ -176,8 +169,8 @@ class Layout extends React.Component {
             <main className={classes.content}>
               <div className={classes.toolbar}/>
               <Route exact path='/' component={Home}/>
-              <Route path='/signup' component={Signup}/>
               <Route path='/login' component={Login}/>
+              <PrivateRoute path='/protected' component={Person}/>
             </main>
           </ApolloProvider>
         </div>
@@ -186,9 +179,9 @@ class Layout extends React.Component {
   }
 }
 
-Layout.propTypes = {
+ProtectedLayout.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, {withTheme: true})(Layout);
+export default withStyles(styles, {withTheme: true})(ProtectedLayout);

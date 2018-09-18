@@ -103,6 +103,7 @@ class Login extends Component {
                   .then(value => {
                     console.log('Logged in successfully', value);
                     localStorage.setItem('access_token', value.data.login.jwt);
+                    window.location.replace(window.location.origin);
                   })
                   .catch(error => {
                     // todo notify the user
