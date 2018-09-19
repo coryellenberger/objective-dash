@@ -2,9 +2,7 @@ import React, {Component} from 'react';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import createMuiTheme from '@material-ui/core/styles/createMuiTheme';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Layout from './Layout/Layout';
 import ProtectedLayout from './Layout/ProtectedLayout';
-import {isAuthenticated} from './Auth';
 
 const theme = createMuiTheme({
   palette: {
@@ -24,17 +22,13 @@ const theme = createMuiTheme({
   },
 });
 
-const CurrentLayout = isAuthenticated() ? (<ProtectedLayout/>) : (<Layout/>);
-
 export default class App extends Component {
   render() {
-    const self = this;
-
     return (
       <React.Fragment>
         <CssBaseline/>
         <MuiThemeProvider theme={theme}>
-          {CurrentLayout}
+          <ProtectedLayout/>
         </MuiThemeProvider>
       </React.Fragment>
     );

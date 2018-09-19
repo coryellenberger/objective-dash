@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Mutation} from 'react-apollo';
+import {ApolloProvider, Mutation} from 'react-apollo';
 
 import gql from 'graphql-tag';
 
@@ -20,6 +20,7 @@ import {
 import LockIcon from '@material-ui/icons/LockOutlined';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import {getClient} from "../ApolloClient";
 
 const styles = theme => ({
   layout: {
@@ -69,7 +70,12 @@ class Login extends Component {
     this.state = {
       email: '',
       password: '',
+      showPassword: false,
     };
+
+    this.history = props.history;
+
+    this.callback = props.callback;
 
     this.handleChange = prop => event => {
       this.setState({[prop]: event.target.value});
@@ -87,72 +93,77 @@ class Login extends Component {
   render() {
     const {classes} = this.props;
     const state = this.state;
+    const history = this.history;
+    const callback = this.callback;
 
     return (
-      <Mutation mutation={LOGIN}>
-        {(login) => (
-          <main className={classes.layout}>
-            <Paper className={classes.paper}>
-              <Avatar className={classes.avatar}>
-                <LockIcon/>
-              </Avatar>
-              <Typography variant="headline">Sign in</Typography>
-              <form className={classes.form} onSubmit={e => {
-                e.preventDefault();
-                login({variables: {email: state.email, password: state.password}})
-                  .then(value => {
-                    console.log('Logged in successfully', value);
-                    localStorage.setItem('access_token', value.data.login.jwt);
-                    window.location.replace(window.location.origin);
-                  })
-                  .catch(error => {
-                    // todo notify the user
-                    console.log('There was an error', error);
-                  });
-                console.log('Logged in?', state.email);
-              }}>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="email">Email</InputLabel>
-                  <Input
-                    id="email"
-                    value={this.state.email}
-                    onChange={this.handleChange('email')}
-                    autoFocus
-                  />
-                </FormControl>
-                <FormControl margin="normal" required fullWidth>
-                  <InputLabel htmlFor="adornment-password">Password</InputLabel>
-                  <Input
-                    id="adornment-password"
-                    type={this.state.showPassword ? 'text' : 'password'}
-                    value={this.state.password}
-                    onChange={this.handleChange('password')}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="Toggle password visibility"
-                          onClick={this.handleClickShowPassword}
-                          onMouseDown={this.handleMouseDownPassword}
-                        >
-                          {this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                  />
-                </FormControl>
-                <br/>
-                <Button type="submit"
-                        fullWidth
-                        variant="raised"
-                        color="primary"
-                        className={classes.submit}>
-                  Login
-                </Button>
-              </form>
-            </Paper>
-          </main>
-        )}
-      </Mutation>
+      <ApolloProvider client={getClient()}>
+        <Mutation mutation={LOGIN}>
+          {(login) => (
+            <main className={classes.layout}>
+              <Paper className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                  <LockIcon/>
+                </Avatar>
+                <Typography variant="headline">Sign in</Typography>
+                <form className={classes.form} onSubmit={e => {
+                  e.preventDefault();
+                  login({variables: {email: state.email, password: state.password}})
+                    .then(value => {
+                      console.log('Logged in successfully', value);
+                      localStorage.setItem('access_token', value.data.login.jwt);
+                      callback();
+                      history.push('/');
+                    })
+                    .catch(error => {
+                      // todo notify the user
+                      console.log('There was an error', error);
+                    });
+                  console.log('Logged in?', state.email);
+                }}>
+                  <FormControl margin="normal" required fullWidth>
+                    <InputLabel htmlFor="email">Email</InputLabel>
+                    <Input
+                      id="email"
+                      value={this.state.email}
+                      onChange={this.handleChange('email')}
+                      autoFocus
+                    />
+                  </FormControl>
+                  <FormControl margin="normal" required fullWidth>
+                    <InputLabel htmlFor="adornment-password">Password</InputLabel>
+                    <Input
+                      id="adornment-password"
+                      type={this.state.showPassword ? 'text' : 'password'}
+                      value={this.state.password}
+                      onChange={this.handleChange('password')}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="Toggle password visibility"
+                            onClick={this.handleClickShowPassword}
+                            onMouseDown={this.handleMouseDownPassword}
+                          >
+                            {this.state.showPassword ? <VisibilityOff/> : <Visibility/>}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                  </FormControl>
+                  <br/>
+                  <Button type="submit"
+                          fullWidth
+                          variant="raised"
+                          color="primary"
+                          className={classes.submit}>
+                    Login
+                  </Button>
+                </form>
+              </Paper>
+            </main>
+          )}
+        </Mutation>
+      </ApolloProvider>
     );
   }
 }

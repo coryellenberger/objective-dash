@@ -19,9 +19,8 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import StarIcon from '@material-ui/icons/Star';
 import SendIcon from '@material-ui/icons/Send';
-import {ApolloProvider} from 'react-apollo';
-
-import {getClient} from '../ApolloClient';
+import {isAuthenticated} from '../Auth';
+import Signup from "../components/Signup";
 
 const drawerWidth = 240;
 
@@ -106,8 +105,61 @@ class ProtectedLayout extends React.Component {
     this.setState({open: false});
   };
 
+  getNav = () => {
+    return isAuthenticated() ?
+      <List>
+        <NavLink to={'/'} style={{textDecoration: 'none'}}>
+          <ListItem button>
+            <ListItemIcon>
+              <InboxIcon/>
+            </ListItemIcon>
+            <ListItemText primary='Inbox'/>
+          </ListItem>
+        </NavLink>
+        <NavLink to={'/protected'} style={{textDecoration: 'none'}}>
+          <ListItem button>
+            <ListItemIcon>
+              <StarIcon/>
+            </ListItemIcon>
+            <ListItemText primary='Starred'/>
+          </ListItem>
+        </NavLink>
+      </List>
+      :
+      <List>
+        <NavLink to={'/'} style={{textDecoration: 'none'}}>
+          <ListItem button>
+            <ListItemIcon>
+              <InboxIcon/>
+            </ListItemIcon>
+            <ListItemText primary='Not Authenticated'/>
+          </ListItem>
+        </NavLink>
+        <NavLink to={'/signup'} style={{textDecoration: 'none'}}>
+          <ListItem button>
+            <ListItemIcon>
+              <InboxIcon/>
+            </ListItemIcon>
+            <ListItemText primary='Not Authenticated'/>
+          </ListItem>
+        </NavLink>
+        <NavLink to={'/login'} style={{textDecoration: 'none'}}>
+          <ListItem button>
+            <ListItemIcon>
+              <InboxIcon/>
+            </ListItemIcon>
+            <ListItemText primary='Not Authenticated'/>
+          </ListItem>
+        </NavLink>
+      </List>
+  };
+
   render() {
     const {classes, theme} = this.props;
+
+    this.callback = () => {
+      this.forceUpdate();
+    }
 
     return (
       <Router>
@@ -146,33 +198,15 @@ class ProtectedLayout extends React.Component {
               </IconButton>
             </div>
             <Divider/>
-            <List>
-              <NavLink to={'/'} style={{textDecoration: 'none'}}>
-                <ListItem button>
-                  <ListItemIcon>
-                    <InboxIcon/>
-                  </ListItemIcon>
-                  <ListItemText primary='Inbox'/>
-                </ListItem>
-              </NavLink>
-              <NavLink to={'/protected'} style={{textDecoration: 'none'}}>
-                <ListItem button>
-                  <ListItemIcon>
-                    <StarIcon/>
-                  </ListItemIcon>
-                  <ListItemText primary='Starred'/>
-                </ListItem>
-              </NavLink>
-            </List>
+            {this.getNav()}
           </Drawer>
-          <ApolloProvider client={getClient()}>
-            <main className={classes.content}>
-              <div className={classes.toolbar}/>
-              <Route exact path='/' component={Home}/>
-              <Route path='/login' component={Login}/>
-              <PrivateRoute path='/protected' component={Person}/>
-            </main>
-          </ApolloProvider>
+          <main className={classes.content}>
+            <div className={classes.toolbar}/>
+            <Route exact path='/' component={Home}/>
+            <Route path='/signup' component={Signup}/>
+            <Route path='/login' render={(props) => <Login callback={this.callback} history={props.history}/>}/>
+            <PrivateRoute path='/protected' component={Person}/>
+          </main>
         </div>
       </Router>
     );

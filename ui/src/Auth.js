@@ -11,7 +11,7 @@ export const signout = (cb) => {
 }
 
 export const isAuthenticated = () => {
-  var accessToke = localStorage.getItem(ACCESS_TOKEN);
+  const accessToke = localStorage.getItem(ACCESS_TOKEN);
   if (accessToke) {
     return true;
   } else {
