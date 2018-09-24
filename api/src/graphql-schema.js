@@ -10,6 +10,7 @@ export const typeDefs = `
     email: String!
     password: String!
     jwt: String
+    expirationDate: String
   }
   
   type Query {
@@ -26,7 +27,12 @@ export const resolvers = {
   Query: {
     currentUser: async (root, args, context) => {
       context = await context.authScope;
-      return await context.user;
+      const user = await context.user;
+      if (user) {
+        return user;
+      } else {
+        throw 'Not Authenticated';
+      }
     },
   },
   Mutation: {
@@ -49,10 +55,14 @@ export const resolvers = {
         throw new Error('Password is incorrect');
       }
 
+      const expire = expirationDate();
+
       user.jwt = jwt.sign({
-        exp: expirationDate(),
+        exp: expire,
         id: user.id
       }, context.secrets.JWT_SECRET);
+
+      user.expirationDate = expire;
 
       session.close();
 
@@ -90,11 +100,6 @@ export const resolvers = {
         });
       // get user from results
       const user = results.records[0].get('newUser').properties;
-
-      user.jwt = jwt.sign({
-        exp: expirationDate(),
-        id: user.id
-      }, context.secrets.JWT_SECRET);
 
       session.close();
 

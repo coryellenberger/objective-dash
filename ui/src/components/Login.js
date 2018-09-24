@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
+import { authenticate } from '../Auth';
 
 import {
   Avatar,
@@ -60,6 +61,7 @@ const LOGIN = gql`
       id
       email
       jwt
+      expirationDate
     }
   }
 `;
@@ -111,8 +113,7 @@ class Login extends Component {
                   login({variables: {email: state.email, password: state.password}})
                     .then(value => {
                       console.log('Logged in successfully', value);
-                      localStorage.setItem('access_token', value.data.login.jwt);
-                      callback();
+                      authenticate(callback, value.data.login.jwt, value.data.login.expirationDate);
                       history.push('/');
                     })
                     .catch(error => {
