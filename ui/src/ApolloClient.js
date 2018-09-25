@@ -3,9 +3,11 @@ import {InMemoryCache} from 'apollo-cache-inmemory';
 import {HttpLink} from 'apollo-link-http';
 import {onError} from 'apollo-link-error';
 import {ApolloLink} from 'apollo-link';
+import {getToken} from './Auth';
 
 export const getClient = () => {
-  const access_token = localStorage.getItem('access_token');
+  // setup the headers with the access_token for authenticating on the server
+  const access_token = getToken();
   const headers = {
     authorization: access_token ? `Bearer ${access_token}` : null
   };

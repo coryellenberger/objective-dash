@@ -5,13 +5,17 @@ export const authenticate = (cb, JWT, expirationDate) => {
   localStorage.setItem(ACCESS_TOKEN, JWT);
   localStorage.setItem(ACCESS_TIMEOUT, expirationDate);
   cb();
-}
+};
+
+export const getToken = () => {
+  return localStorage.getItem(ACCESS_TOKEN);
+};
 
 export const signout = (cb) => {
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(ACCESS_TIMEOUT);
   cb();
-}
+};
 
 export const isAuthenticated = () => {
   const accessTimeout = localStorage.getItem(ACCESS_TIMEOUT);
