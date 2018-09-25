@@ -19,6 +19,7 @@
     "bcrypt": "^3.0.0",
     "dotenv": "^5.0.1",
     "graphql-tag": "^2.9.2",
+    "graphql-tools": "^4.0.0",
     "jsonwebtoken": "^8.3.0",
     "neo4j-driver": "^1.6.1",
     "neo4j-graphql-js": "^0.1.26",

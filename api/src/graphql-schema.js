@@ -111,7 +111,7 @@ export const resolvers = {
   }
 };
 
-export async function context(req) {
+export const context = async (req) => {
   if (!driver) {
     driver = neo4j.driver(
       process.env.NEO4J_URI || "bolt://localhost:7687",
@@ -138,7 +138,6 @@ export async function context(req) {
     driver,
     user,
   };
-
 }
 
 const getUser = async (authorization, secrets, driver) => {
