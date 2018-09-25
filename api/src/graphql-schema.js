@@ -138,7 +138,6 @@ export async function context(req) {
     driver,
     user,
   };
-
 }
 
 const getUser = async (authorization, secrets, driver) => {

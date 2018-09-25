@@ -1,6 +1,14 @@
 import { typeDefs, resolvers, context } from "./graphql-schema";
-import { ApolloServer } from "apollo-server";
+import { ApolloServer } from "apollo-server-express";
+import Express from 'express';
 import dotenv from "dotenv";
+
+const app = Express();
+
+app.use((req, res, next) => {
+  console.log('Time:', Date.now());
+  next();
+});
 
 dotenv.config();
 
@@ -16,6 +24,8 @@ const server = new ApolloServer({
   }),
 });
 
-server.listen(process.env.GRAPHQL_LISTEN_PORT, '0.0.0.0').then(({ url }) => {
-  console.log(`GraphQL API ready at ${url}`);
+server.applyMiddleware({ app });
+
+app.listen({ port: process.env.GRAPHQL_LISTEN_PORT }, () => {
+  console.log(`GraphQL API ready at ${server.graphqlPath}`);
 });
