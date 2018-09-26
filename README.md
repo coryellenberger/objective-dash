@@ -5,17 +5,17 @@ This project uses the [GRANDstack](https://grandstack.io) (GraphQL, React, Apoll
 ## Useful Knowledge
 
 ### API
-* Apollo Server
-* GraphQL
-* GraphQL Tools
-* Neo4j
+* [Apollo Server](https://www.apollographql.com/docs/apollo-server/)
+* [GraphQL](https://graphql.org/)
+* [GraphQL Tools](https://www.apollographql.com/docs/graphql-tools/)
+* [Neo4j](https://neo4j.com/)
 
 ### UI
-* Apollo Client
-* ReactJS
-* React Router
-* Material UI
-* GraphQL
+* [Apollo Client](https://www.apollographql.com/docs/react/)
+* [ReactJS](https://reactjs.org/)
+* [React Router](https://reacttraining.com/react-router/web/guides/philosophy)
+* [Material UI](https://material-ui.com/)
+* [GraphQL](https://graphql.org/)
 
 ## Quickstart
 
