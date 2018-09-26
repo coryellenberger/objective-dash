@@ -25,24 +25,34 @@ export const typeDefs = `
 
 export const resolvers = {
   Query: {
-    currentUser: async (root, args, context) => {
+    /**
+     * Returns the current User
+     * @param parent - {@link https://www.apollographql.com/docs/apollo-server/essentials/data.html#type-signature Resolver Signature: parent}
+     * @param args - unused
+     * @param context - {@link https://www.apollographql.com/docs/apollo-server/essentials/data.html#type-signature Resolver Signature: context}
+     * @returns {Promise<void>}
+     */
+    currentUser: async (parent, args, context) => {
       context = await context.authScope;
-      const user = await context.user;
-      if (user) {
-        return user;
-      } else {
-        throw 'Not Authenticated';
-      }
+      return await context.user;
     },
   },
   Mutation: {
-    login: async (root, { email, password }, context) => {
+    /**
+     * Login Mutation will authenticate the user and return their JWT for further authentication against the server
+     * @param parent - {@link https://www.apollographql.com/docs/apollo-server/essentials/data.html#type-signature Resolver Signature: parent}
+     * @param email - Email to authenticate with
+     * @param password - Password to authenticate with
+     * @param context - {@link https://www.apollographql.com/docs/apollo-server/essentials/data.html#type-signature Resolver Signature: context}
+     * @returns {Promise<User>} User with JWT and expirationDate attached
+     */
+    login: async (parent, {email, password}, context) => {
       context = await context.authScope;
 
       const session = context.driver.session();
 
       const userResults = await session
-        .run('MATCH (user:User { email: { email } }) RETURN user', { email: email });
+        .run('MATCH (user:User { email: { email } }) RETURN user', {email: email});
 
       if (!userResults.records.length > 0) {
         throw new Error('Email not found');
@@ -71,13 +81,24 @@ export const resolvers = {
 
       return user;
     },
-    signup: async (root, { email, password }, context) => {
+
+    /**
+     * Signup Mutation will create a new User with the provided email/password
+     * IF: User with this email address doesn't already exist in the DB
+     * ALSO: the password will be hashed
+     * @param parent - {@link https://www.apollographql.com/docs/apollo-server/essentials/data.html#type-signature Resolver Signature: parent}
+     * @param email - Email to create new User with
+     * @param password - Password to hash for later authentication
+     * @param context - {@link https://www.apollographql.com/docs/apollo-server/essentials/data.html#type-signature Resolver Signature: context}
+     * @returns {Promise<User>} User that was created
+     */
+    signup: async (parent, {email, password}, context) => {
       context = await context.authScope;
 
       const session = context.driver.session();
 
       const existingUser = await session
-        .run('MATCH (user:User { email: { email } }) RETURN user', { email: email });
+        .run('MATCH (user:User { email: { email } }) RETURN user', {email: email});
 
       if (existingUser.records.length > 0) {
         throw new Error('Email already used');
@@ -101,6 +122,15 @@ export const resolvers = {
       // get user from results
       const user = results.records[0].get('newUser').properties;
 
+      const expire = expirationDate();
+
+      user.jwt = jwt.sign({
+        exp: expire,
+        id: user.id
+      }, context.secrets.JWT_SECRET);
+
+      user.expirationDate = expire;
+
       session.close();
 
       // clear the password from the user object before returning
@@ -111,7 +141,9 @@ export const resolvers = {
   }
 };
 
-export async function context(req) {
+export const publicResolvers = ['login', 'signup'];
+
+export const context = async (req) => {
   if (!driver) {
     driver = neo4j.driver(
       process.env.NEO4J_URI || "bolt://localhost:7687",
@@ -138,14 +170,13 @@ export async function context(req) {
     driver,
     user,
   };
-
-}
+};
 
 const getUser = async (authorization, secrets, driver) => {
   const bearerLength = "Bearer ".length;
   if (authorization && authorization.length > bearerLength) {
     const token = authorization.slice(bearerLength);
-    const { ok, result } = await new Promise(resolve =>
+    const {ok, result} = await new Promise(resolve =>
       jwt.verify(token, secrets.JWT_SECRET, (err, result) => {
         if (err) {
           resolve({
@@ -166,7 +197,7 @@ const getUser = async (authorization, secrets, driver) => {
       let user;
 
       const results = await session
-        .run('MATCH (user:User { id: { id } }) RETURN user', { id: result.id });
+        .run('MATCH (user:User { id: { id } }) RETURN user', {id: result.id});
 
       if (results.records.length) {
         user = results.records[0].get('user').properties;
