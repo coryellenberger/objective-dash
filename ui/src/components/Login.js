@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
-import { authenticate } from '../Auth';
+import {authenticate} from '../Auth';
 
 import {
   Avatar,
@@ -56,7 +56,7 @@ const styles = theme => ({
 });
 
 const LOGIN = gql`
-  mutation login($email: String!, $password: String!) {
+  mutation ($email: String!, $password: String!) {
     login(email: $email, password: $password){
       id
       email
@@ -120,7 +120,6 @@ class Login extends Component {
                       // todo notify the user
                       console.log('There was an error', error);
                     });
-                  console.log('Logged in?', state.email);
                 }}>
                   <FormControl margin="normal" required fullWidth>
                     <InputLabel htmlFor="email">Email</InputLabel>
