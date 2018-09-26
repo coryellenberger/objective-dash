@@ -203,7 +203,7 @@ class ProtectedLayout extends React.Component {
           <main className={classes.content}>
             <div className={classes.toolbar}/>
             <Route exact path='/' component={Home}/>
-            <Route path='/signup' component={Signup}/>
+            <Route path='/signup' render={(props) => <Signup callback={this.callback} history={props.history}/>}/>
             <Route path='/login' render={(props) => <Login callback={this.callback} history={props.history}/>}/>
             <PrivateRoute path='/protected' component={Person}/>
           </main>
