@@ -2,6 +2,21 @@
 
 This project uses the [GRANDstack](https://grandstack.io) (GraphQL, React, Apollo, Neo4j Database). There are two components to the starter, the UI application (a React app) and the API app (GraphQL server).
 
+## Useful Knowledge
+
+## API
+* Apollo Server
+* GraphQL
+* GraphQL Tools
+* Neo4j
+
+## UI
+* Apollo Client
+* ReactJS
+* React Router
+* Material UI
+* GraphQL
+
 ## Quickstart
 
 ### Neo4j

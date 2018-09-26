@@ -2,6 +2,8 @@
   "name": "objective-dash-ui",
   "version": "0.0.1",
   "description": "UI app for the Objective Dashboard",
+  "author": "Cory Ellenberger",
+  "license": "MIT",
   "dependencies": {
     "@material-ui/core": "^3.0.3",
     "@material-ui/icons": "^3.0.1",
