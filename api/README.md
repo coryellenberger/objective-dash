@@ -1,4 +1,4 @@
-# MBO Dashboard - GraphQL API
+# MBO Dashboard - [GraphQL API](https://graphql.org/)
 
 
 ## Quick Start

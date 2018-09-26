@@ -1,6 +1,6 @@
 # MBO Dashboard- UI
 
-This directory contains a React app that uses Apollo Client to query a GraphQL API.
+This directory contains a [React](https://reactjs.org/) app that uses [Material UI](https://material-ui.com/) for Style/Theming and [Apollo Client](https://www.apollographql.com/docs/react/) to query a [GraphQL](https://graphql.org/) API.
 
 ## Quickstart
 
