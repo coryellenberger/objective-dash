@@ -4,13 +4,13 @@ This project uses the [GRANDstack](https://grandstack.io) (GraphQL, React, Apoll
 
 ## Useful Knowledge
 
-## API
+### API
 * Apollo Server
 * GraphQL
 * GraphQL Tools
 * Neo4j
 
-## UI
+### UI
 * Apollo Client
 * ReactJS
 * React Router
