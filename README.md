@@ -10,14 +10,14 @@ You need a Neo4j instance, e.g. a [Neo4j Sandbox](http://neo4j.com/sandbox), a l
 
 For schemas using the  `@cypher` directive via [`neo4j-graphql-js`](https://github.com/neo4j-graphql/neo4j-graphql-js), you need to have the [APOC library](https://github.com/neo4j-contrib/neo4j-apoc-procedures) installed, which is automatic in Sandbox, Cloud and a single click install in Neo4j Desktop. 
 
-### [`/api`](./api)
-
 *Install dependencies*
 
 ```
 (cd ./ui && npm install)
 (cd ./api && npm install)
 ```
+
+### [`/api`](./api)
 
 *Start API server*
 ```
