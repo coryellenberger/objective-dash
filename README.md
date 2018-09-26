@@ -1,6 +1,6 @@
-# GRANDstack Starter
+# MBO Dashboard
 
-This project is a starter for building a [GRANDstack](https://grandstack.io) (GraphQL, React, Apollo, Neo4j Database) application. There are two components to the starter, the UI application (a React app) and the API app (GraphQL server).
+This project uses the [GRANDstack](https://grandstack.io) (GraphQL, React, Apollo, Neo4j Database). There are two components to the starter, the UI application (a React app) and the API app (GraphQL server).
 
 ## Quickstart
 
@@ -36,6 +36,3 @@ cd ./ui && npm start
 ```
 
 ![](ui/img/default-app.png)
-
-This project is licensed under the Apache License v2.
-Copyright (c) 2018 Neo4j, Inc.

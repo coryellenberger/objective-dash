@@ -1,8 +1,6 @@
-# GRANDstack Starter - UI
+# MBO Dashboard- UI
 
-This directory contains a React app (bootstrapped with Create React App) that uses Apollo Client to query a GraphQL API.
-
-The template app queries for a list of users from the GraphQL API and displays them in a list.
+This directory contains a React app that uses Apollo Client to query a GraphQL API.
 
 ## Quickstart
 
@@ -19,8 +17,6 @@ npm start
 ```
 
 This will serve the app on `http://localhost:3000`
-
-![](img/default-app.png)
 
 ## Configure
 
